@@ -1,0 +1,937 @@
+BankLang = {}
+
+-- if you want to add this to notifications you can, to use with notifyleft for example just add it bellow to the notify
+-- [[ title = "Bank", dict = "generic_textures", texture = "tick", color = "White" ]]
+BankLang.Translation = {
+    notify = {
+        --CLIENT
+        checkmask = function(vorp)
+            local msg = "Du hast eine Maske auf, bitte nimm sie ab, um die Bank zu benutzen."
+            vorp.NotifyObjective(msg, 5000)
+            --EXAMPLES
+            --vorp.NotifyLeft(title, msg, dict,icon, 5000, color)
+        end,
+        checkgun = function(vorp)
+            local msg = "Du hast eine Waffe in der Hand, bitte steck sie weg, um die Bank zu benutzen."
+            vorp.NotifyObjective(msg, 5000)
+        end,
+        accessStorage = function(vorp)
+            local msg = "Geh zur Tür, um den Tresorraum zu betreten und auf das Lager zuzugreifen"
+            vorp.NotifyObjective(msg, 5000)
+        end,
+        accessStorage2 = function(vorp)
+            local msg = "Der Spieler kann zur Tür gehen, um das Lager zu betreten, sie schließt sich, sobald er herauskommt."
+            vorp.NotifyObjective(msg, 5000)
+        end,
+        transactionNotAllowed = function(vorp)
+            local msg = "Der Spieler darf keine Transaktionen durchführen"
+            vorp.NotifyObjective(msg, 5000)
+        end,
+        transactionNotAllowed2 = function(vorp)
+            local msg = "Du bist nicht berechtigt, auf diese Optionen zuzugreifen"
+            vorp.NotifyObjective(msg, 5000)
+        end,
+        transactionDeleted = function(vorp)
+            local msg = "Transaktion ~e~deleted"
+            vorp.NotifyObjective(msg, 5000)
+        end,
+        noMoneyForSlots = function(vorp)
+            local msg = "Du hast nicht genug Geld, um weitere Plätze auf deinem Bankkonto hinzuzufügen"
+            vorp.NotifyObjective(msg, 5000)
+        end,
+        positiveBalance = function(vorp)
+            local msg = "Du musst einen positiven Saldo haben, um einen Kredit zu beantragen"
+            vorp.NotifyObjective(msg, 5000)
+        end,
+        notEnoughDays = function(vorp, value)
+            local msg = "Du musst mindestens Kunde sein seit " .. value .. " Tage, um einen Kredit zu beantragen"
+            vorp.NotifyObjective(msg, 5000)
+        end,
+        hasLoansAlready = function(vorp)
+            local msg = "Du hast bereits Kredite zu bezahlen"
+            vorp.NotifyObjective(msg, 5000)
+        end,
+        notYourProperty = function(vorp)
+            local msg = "Dies ist nicht dein Eigentum"
+            vorp.NotifyObjective(msg, 5000)
+        end,
+        noGoldForSale = function(vorp)
+            local msg = "Du hast kein Gold bei dir oder die Bank akzeptiert dein Gold nicht"
+            vorp.NotifyObjective(msg, 5000)
+        end,
+        youSoldGold = function(vorp, price, item)
+            local msg = "Du verkaufst " .. item .. " für $" .. price
+            vorp.NotifyObjective(msg, 5000)
+        end,
+        noItemToSell = function(vorp, item)
+            local msg = "Du hast nicht genug von " .. item .. " zum verkaufen"
+            vorp.NotifyObjective(msg, 5000)
+        end,
+        noGoldInVault = function(vorp)
+            local msg = "Hier ist kein Gold im Tresor"
+            vorp.NotifyObjective(msg, 5000)
+        end,
+        noActiveLoans = function(vorp)
+            local msg = "Keine aktiven Kredite"
+            vorp.NotifyObjective(msg, 5000)
+        end,
+        noWantedPlayers = function(vorp)
+            local msg = "Keine gesuchten Spieler"
+            vorp.NotifyObjective(msg, 5000)
+        end,
+        invalidId = function(vorp)
+            local msg = "Ungültige id"
+            vorp.NotifyObjective(msg, 5000)
+        end,
+        bankDontAccept = function(vorp, days)
+            local msg = "Die Bank akzeptiert nicht weniger als " .. days .. " Tage als Kunde"
+            vorp.NotifyObjective(msg, 5000)
+        end,
+        --SERVER
+        noAccount = function(vorp, source)
+            local msg = "Du hast kein Konto bei uns!! \n geh zum Schalter und eröffne eins"
+            vorp.NotifyObjective(source, msg, 5000)
+        end,
+        waitTurn = function(vorp, source)
+            local msg = "Bitte warte bis du an der Reihe bist"
+            vorp.NotifyObjective(source, msg, 5000)
+        end,
+        userDontExist = function(vorp, source)
+            local msg = "Kunde existiert nicht"
+            vorp.NotifyObjective(source, msg, 5000)
+        end,
+        openedAccount = function(vorp, source, price)
+            local msg = "Herzlichen Glückwunsch!! \n Du hast ein Konto bei uns eröffnet und zahlst $" .. price
+            vorp.NotifyObjective(source, msg, 5000)
+        end,
+        openedAccount2 = function(vorp, source, price)
+            local msg = "Konto erfolgreich eröffnet, Spieler zahltt $" .. price
+            vorp.NotifyObjective(source, msg, 5000)
+        end,
+        noMoneyForAccount = function(vorp, source)
+            local msg = "Nicht genug Geld, um ein Konto zu eröffnen"
+            vorp.NotifyObjective(source, msg, 5000)
+        end,
+        youDeposited = function(vorp, source, amount, action)
+            local msg = "Eingezahlt $" .. amount .. "auf dein Konto"
+            if action == "gold" then
+                msg = "deposited " .. amount .. " gold to your account"
+            end
+            vorp.NotifyObjective(source, msg, 5000)
+        end,
+        heDeposited = function(vorp, source, amount, action)
+            local msg = "Eingezahlt $" .. amount .. "auf sein Konto"
+            if action == "gold" then
+                msg = "deposited " .. amount .. " gold to his account"
+            end
+            vorp.NotifyObjective(source, msg, 5000)
+        end,
+        youWithdrew = function(vorp, source, amount, action)
+            local msg = "Ausgezahlt $" .. amount .. "von deinem Konto"
+            if action == "gold" then
+                msg = "Ausgezahlt " .. amount .. " Gold von deinem Konto"
+            end
+            vorp.NotifyObjective(source, msg, 5000)
+        end,
+        heWithdrew = function(vorp, source, amount, action)
+            local msg = "Ausgezahlt $" .. amount .. "von seinem Konto"
+            if action == "gold" then
+                msg = "Ausgezahlt " .. amount .. " Gold von seinem Konto"
+            end
+            vorp.NotifyObjective(source, msg, 5000)
+        end,
+        updatedBalance = function(vorp, source, name, action)
+            local msg = "Du hast den Saldo aktualisiert für " .. name
+            if action == "gold" then
+                msg = "Du hast dein Goldsaldo aktualisiert für " .. name
+            end
+            vorp.NotifyObjective(source, msg, 5000)
+        end,
+        updatedSlots = function(vorp, source, price)
+            local msg = "Du hast Plätze aktualisiert für $" .. price
+            vorp.NotifyObjective(source, msg, 5000)
+        end,
+        boughtStorage = function(vorp, source, price)
+            local msg = "Lagereinheit gekauft für $" .. price
+            vorp.NotifyObjective(source, msg, 5000)
+        end,
+        paidBankFeeFromPocket = function(vorp, source, price)
+            local msg = "Du hast gezahlt $" .. price ..
+                "der Bankgebühr aus deiner Tasche, weil du das Geld nicht auf der Bank hast"
+            vorp.NotifyObjective(source, msg, 5000)
+        end,
+        accountDontExist = function(vorp, source)
+            local msg = "Konto existiert nicht"
+            vorp.NotifyObjective(source, msg, 5000)
+        end,
+        transferToAccount = function(vorp, source, amount, boxid)
+            local msg = "Übertragen $" .. amount .. " zur Konto-ID " .. boxid
+            vorp.NotifyObjective(source, msg, 5000)
+        end,
+        cantTransferToSelf = function(vorp, source)
+            local msg = "Kann weder auf sich selbst noch auf einen anderen Charakter übertragen werden"
+            vorp.NotifyObjective(source, msg, 5000)
+        end,
+        chooseOutsideState = function(vorp, source)
+            local msg = "Ein Konto außerhalb dieser Bank wählen"
+            vorp.NotifyObjective(source, msg, 5000)
+        end,
+        hasAccessToAccount = function(vorp, source)
+            local msg = "Der Spieler bereits Zugang zu diesem Konto"
+            vorp.NotifyObjective(source, msg, 5000)
+        end,
+        addedToAccount = function(vorp, source, name, price)
+            local msg = "Du hast hinzugefügt " .. name .. " zum Konto und zahlst $" .. price
+            vorp.NotifyObjective(source, msg, 5000)
+        end,
+        removedFromAccount = function(vorp, source, name)
+            local msg = "Du hast entfernt " .. name .. " vom Konto"
+            vorp.NotifyObjective(source, msg, 5000)
+        end,
+        updatedAccessAccount = function(vorp, source, name)
+            local msg = "Du aktualisierst " .. name .. " Zugriff auf das Konto mit deinen Änderungen"
+            vorp.NotifyObjective(source, msg, 5000)
+        end,
+        notAllowedToAccessAccount = function(vorp, source)
+            local msg = "Du bist nicht berechtigt, auf das Konto zuzugreifen"
+            vorp.NotifyObjective(source, msg, 5000)
+        end,
+        closedAccount = function(vorp, source, money)
+            local msg = "Du hast dein Konto bei dieser Bank aufgelöst hast und alle Gelder, die du darauf hattest, erhalten $" .. money
+            vorp.NotifyObjective(source, msg, 5000)
+        end,
+        loanApproved = function(vorp, source, amount)
+            local msg = "Kredit in Höhe von $" .. amount .. " wurde akzeptiert"
+            vorp.NotifyObjective(source, msg, 5000)
+        end,
+        noEnoughGold = function(vorp, source)
+            local msg = "Du hast nicht genug Gold zum Verkaufen"
+            vorp.NotifyObjective(source, msg, 5000)
+        end,
+        noAccountHere = function(vorp, source)
+            local msg = "Spieler, die noch kein Konto hier haben, müssen erst eines eröffnen"
+            vorp.NotifyObjective(source, msg, 5000)
+        end,
+        canEnterStorage = function(vorp, source)
+            local msg = "Spieler kann das Lager betreten"
+            vorp.NotifyObjective(source, msg, 5000)
+        end,
+        onDuty = function(vorp, source)
+            local msg = "Du arbeitest jetzt als Banker"
+            vorp.NotifyObjective(source, msg, 5000)
+        end,
+        offDuty = function(vorp, source)
+            local msg = "Du bist nicht mehr als Banker tätig"
+            vorp.NotifyObjective(source, msg, 5000)
+        end,
+        hired = function(vorp, source, name)
+            local msg = "Du hast eingestellt " .. name .. " als Banker"
+            vorp.NotifyObjective(source, msg, 5000)
+        end,
+        fired = function(vorp, source, name)
+            local msg = "Du hast gefeuert " .. name .. " als Banker"
+            vorp.NotifyObjective(source, msg, 5000)
+        end,
+        inventoryFull = function(vorp, source)
+            local msg = "Dein Inventar ist voll"
+            vorp.NotifyObjective(source, msg, 5000)
+        end,
+        canCarry = function(vorp, source)
+            local msg = "Du kannst nicht mehr Items tragen"
+            vorp.NotifyObjective(source, msg, 5000)
+        end,
+        succesfullyWithdraw = function(vorp, source, amount, item)
+            local msg = "Du hast erfolgreich zurückgezogen " .. amount .. " " .. item
+            vorp.NotifyObjective(source, msg, 5000)
+        end,
+        couldOnlyWithdraw = function(vorp, source, amount)
+            vorp.NotifyObjective(source, "Konnte nur zurückziehen " .. amount .. " Items", 5000)
+        end,
+        noPolice = function(vorp, source)
+            local msg = "Es sind nicht genug Sheriffs online, um Raubüberfälle zu begehen."
+            vorp.NotifyObjective(source, msg, 5000)
+        end,
+        noPolice2 = function(vorp)
+            local msg = "Es sind nicht genug Sheriffs online, um Raubüberfälle zu begehen."
+            vorp.NotifyObjective(msg, 5000)
+        end,
+        policeFound = function(vorp, source)
+            local msg = "Die Sheriffs fanden heraus, dass in diesem Moment mit einem Raubüberfall begonnen wird"
+            vorp.NotifyObjective(source, msg, 5000)
+        end,
+        foundItem = function(vorp, source, item, amount)
+            local msg = "Du hast gefunden " .. amount .. " " .. item .. " im Tresor"
+            vorp.NotifyObjective(source, msg, 5000)
+        end,
+        stolenMoney = function(vorp, source, amount)
+            local msg = "Du hast gestohlen $" .. amount .. " vom Tresor"
+            vorp.NotifyObjective(source, msg, 5000)
+        end,
+        alreadycrackingSafe = function(vorp, source)
+            local msg = "Safe wird bereits geknackt"
+            vorp.NotifyObjective(source, msg, 5000)
+        end,
+        nodynamite = function(vorp)
+            local msg = "Du hast weder Dynamit noch Streichhölzer, du brauchst beides"
+            vorp.NotifyObjective(msg, 5000)
+        end,
+        noMatch = function(vorp)
+            local msg = "Du hast kein Streichholz" -- your item here
+            vorp.NotifyObjective(msg, 5000)
+        end,
+        success = function(vorp)
+            local msg = "~t6~Erfolgreich Tür geknackt"
+            vorp.NotifyObjective(msg, 5000)
+        end,
+        failed = function(vorp)
+            local msg = "~e~Fehlgeschlagen T+r zu knacken"
+            vorp.NotifyObjective(msg, 5000)
+        end,
+        successfullySoldGold = function(vorp, source, amount, item, price)
+            vorp.NotifyObjective(source, "Du hast verkauft " .. Menge .. " " .. item .. " für $" .. price, 5000)
+        end,
+        noEnoughMoney = function(vorp, source)
+            local msg = "Die Bank hat nicht genug Geld, um diese Dinge zu bezahlen"
+            vorp.NotifyObjective(source, msg, 5000)
+        end,
+        cantDoThat = function(vorp, source)
+            local msg = "Du kannst deine eigene ID nicht verwenden"
+            vorp.NotifyObjective(source, msg, 5000)
+        end,
+    },
+    prompts = {
+        p_main = { label = "Öffnen", key = 0x760A9C6F },
+        p_business = { label = "Öffnen", key = 0x760A9C6F },
+        p_gold = { label = "Goldverkauf", key = 0xDFF812F9 },
+        p_deliveries = { label = "Öffnen", key = 0x760A9C6F },
+        p_doors = { label = "Tresor knacken", key = 0x760A9C6F },
+        p_employee = { label = "Öffnen", key = 0x760A9C6F },
+        p_safe = { label = "Nach rechts drehen", key = 0xDEB34313 },
+        p_safe1 = { label = "Nach links drehen", key = 0xA65EBAB4 },
+        p_safe2 = { label = "kontrollieren", key = 0x6319DB71 },
+        p_safe3 = { label = "abbrechen", key = 0x05CA7C52 },
+        p_dynamite = { label = "Dynamit platzieren", key = 0xDFF812F9 },
+        closed = "Tür ~e~geschlossen",
+        open = "Tür ~t6~öffnen",
+        vault = "Tresortür",
+        lightup = "Dynamit anzünden"
+    },
+    inputs = {
+        [1] = {
+            confirm = "Bestätigen",
+            placeholder = "Spieler ID eingeben",
+            header = "Spieler einstellen",
+            title = "Nur Zahlen, keine Leerzeichen"
+        },
+        [2] = {
+            confirm = "Bestätigen",
+            placeholder = "Spieler ID eingeben",
+            header = "Spieler entlassen",
+            title = "Nur Zahlen, keine Leerzeichen"
+        },
+        [3] = {
+            confirm = "Bestätigen",
+            placeholder = "Konto suchen",
+            header = "Kontonummer",
+            title = "Nur Zahlen, keine Leerzeichen"
+        },
+        [4] = {
+            confirm = "Bestätigen",
+            placeholder = "ja oder nein",
+            header = "Konto löschen",
+            title = "Nur Buchstaben erlaubt"
+        },
+        [5] = {
+            confirm = "Bestätigen",
+            placeholder = "Spieler ID eingeben",
+            header = "Spieler ID",
+            title = "Nur Zahlen,keine Leerzeichen"
+        },
+
+
+    },
+    menus = {
+
+        main_menu = {
+            display = {
+                client = "Kundename",
+                account = "Konto-Nummer",
+                balance = "Bankguthaben",
+                gold = "Bank Gold",
+                fee = "Nächste Zahlung$",
+                desc = "Details zum Konto anzeigen",
+                img = "folder_recipe_pamphlets"
+            },
+            transaction = {
+                label = "Transaktionen",
+                desc = "Den Kontostand prüfen Einzahlungen vornehmen oder Geld abheben",
+                img = "folder_recipe_pamphlets"
+            },
+            joint = {
+                label = "Gemeinsames Konto",
+                desc = "Prüfen, ob du ein gemeinsames Konto habst und darauf zugreifen kannst",
+                img = "folder_recipe_pamphlets"
+            },
+            view = {
+                label = "Transaktionen anzeigen",
+                desc = "Ihre vergangenen Transaktionen anzeigen",
+                img = "folder_recipe_pamphlets"
+            },
+            transfers = {
+                label = "Übertragungen",
+                desc = "Überweisungen über andere Banken oder an andere Akteure vornehmen",
+                desc1 = "Du hast keinen Zugang oder die Bank unterstützt noch keine Überweisungen!",
+                img = "tick",
+                img1 = "consumable_lock_breaker",
+
+            },
+            storage = {
+                label = "Lager",
+                desc = "Zugang zu deinem Lagerraum, indem du einen Raum für Privatsphäre betrittst",
+                desc1 = "Du hast keine Lagereinheit oder keinen Zugang",
+                img = "tick",
+                img1 = "consumable_lock_breaker",
+                hint = "Berechtigungen können im Business-Menü eingestellt werden",
+                hint1 = "Du kannst eine Lagereinheit im Geschäftsmenü kaufen"
+            },
+            gold = {
+                goldlabel = "Goldgeschäfte",
+            },
+            subText = "Main Menu",
+        },
+        main_ownAccount = {
+            balance = {
+                label = "Bilanz",
+                label1 = "Tasche",
+                desc = "Transaktionsmenü",
+                img = "money_coin",
+                img2 = "provision_goldbar_small" -- gold image
+            },
+            deposit = {
+                label = "Einzahlung",
+                desc = "Geld auf dein Konto einzahlen",
+                img = "selection_arrow_right"
+            },
+            withdraw = {
+                label = "Auszahlen",
+                desc = "Geld von Ihrem Konto auszahlen",
+                img = "selection_arrow_left"
+            },
+            hop = {
+                label = "Hopfenmenge",
+                desc = "Wählen die Hopfenmenge, um den Betrag schneller zu erhalten",
+            },
+            accept = {
+                label = "Bestätigen",
+                desc  = "Akzeptieren den Betrag, den du gewählt hast",
+                hint  = "Zur Bestätigung die Eingabetaste drücken!",
+                img   = "money_coinstack",
+                img1  = "tick",
+                img2  = "provision_goldbar_small" -- gold image
+            },
+            subText = "Transaktionsmenü",
+        },
+        main_transactions = {
+            noTransaction = {
+                label = "Keine Transaktionen gefunden",
+                desc = "Du hast noch keine Transaktionen",
+                img = "cross"
+            },
+            images = {
+                deposit = "selection_arrow_right",
+                withdraw = "selection_arrow_left",
+                transfer = "selection_arrow_right",
+            },
+            labels = {
+                deposit = "Einzahlung gemacht von: ",
+                withdraw = "Auszahlung gemacht von: ",
+                transfer = "Überweisung gemacht von: ",
+                date = "Datum: ",
+                by = "Von: ",
+                amount = "Menge: ",
+                lastbalance = "Letzter Kontostand: ",
+                feepaid = "Bezahlte Gebühr: ",
+                from = "Von: ",
+                hint = "Drücken die Eingabetaste, um diese Transaktion zu löschen.",
+            },
+            subText = "Transaktionsmenü",
+        },
+        main_transfer = {
+            player = {
+                label = "Spielertransfers",
+                desc = "Geld an einen anderen Spieler nur innerhalb dieser Bank überweisen",
+                desc1 = "Preis ",
+                hint = "Du brauchst ihre Kontonummer",
+                img = "selection_arrow_right"
+
+            },
+            bank = {
+                label = "Banküberweisungen",
+                desc = "Geld auf andere Bankkonten überweisen, die Sie vielleicht nur besitzen",
+                desc1 = "Preis ",
+                hint = "Du wirst deine Kontonummer benötigen",
+                img = "selection_arrow_right"
+            },
+            balance = {
+                label = "Bilanz: ",
+                label1 = "Menge: ",
+                desc = "Einzelheiten der Überweisung",
+            },
+            accountnumber = {
+                label = "Kontonummer",
+                desc = "Gib die Kontonummer des Spielers ein, auf den du überweisenn möchtest",
+            },
+            amount = {
+                label = "Menge",
+                desc = "Gib den Betrag ein, den du an eine andere Bank überweisen möchtest",
+            },
+            hop = {
+                label = "Hopfenmenge",
+                desc = "Wählen die Hopfenmenge, um den Betrag schneller zu erhalten",
+            },
+            confirm = {
+                label = "Bestätigen",
+                desc = "Bestätigen den Betrag, den du gewählt hast",
+                desc1 = "Preis ",
+                img = "money_coinstack",
+                img1 = "tick"
+            },
+            subText = "Gemeinsame Kontos",
+        },
+        main_joint = {
+            joint = {
+                label = "Gemeinsames Konto",
+                desc = "Suche nach einem gemeinsamen Konto, um darauf zugreifen zu können.",
+                hint = " Du brauchst die Kontonummer",
+                img = "blip_adversary_large"
+            },
+            subText = "Gemeinsames Konto Menü",
+        },
+        -- BUSINESS MENU
+        business_menu = {
+            open = {
+                label = "Konto eröffnen",
+                desc =
+                "Eröffnung eines neuen Kontos<br> jeden Monat wird von dem Konto eine Gebühr für die Aufrechterhaltung abgezogen werden",
+                img = "rpg_agitation",
+                hint = "Monatliche Gebühr $"
+            },
+            confirm = {
+                label = "Bestätigen $",
+                desc = "Konto Preis",
+                desc1 = "Bestätigung der Zahlung zur Kontoeröffnung",
+                img = "money_coin"
+            },
+            storage = {
+                label = "Lager kaufen",
+                label1 = "Lager Management",
+                desc = "Du hast kein Lager in dieser Bank",
+                desc1 = "Preis ",
+                desc2 = "hier kannst du deinen Lagerplatz aufrüsten <br> jeder Platz kostet $",
+                img = "toast_gang_savings",
+                hint = "storage unit price $"
+
+            },
+            details = {
+                label = "Details zum Konto",
+                desc = "Deine Kontodaten findest du hier",
+                hint = "drücken die Eingabetaste, um sie aufzurufen"
+            },
+            access = {
+                label = "Zugangsverwaltung",
+                desc = "Verwalten den Zugang zu deinem Konto <br> Hinzufügen oder Entfernen von Benutzern zu/von deinem Konto",
+                hint = "Um Nutzer hinzuzufügen, zahlst du eine Gebühr von $"
+            },
+            loans = {
+                label = "Kredite",
+                label1 = "Details zum Kredit",
+                desc = "Beantrage einen Kredit und prüfen, ob du dafür in Frage kommst",
+                desc1 = "Prüfen deine Kreditdaten",
+                desc2 = "Kredite sind nur für Zentralbanken",
+                hint = "fragen oder ausleihen können, wenn du eine bestimmte Anzahl von Tagen als Kunde hast"
+            },
+            close = {
+                label = "Konto schließen",
+                img = "rpg_agitation",
+                desc = "Schließen deinr Konto endgültig",
+                hint = "Wenn du Geld bei der Bank hast, kannst du das Konto nicht schließen."
+            },
+            subText = "Geschäftsmenü",
+        },
+        business_details = {
+            details = {
+                client = "Name des Kunden",
+                account = "Konto-Nummer",
+                balance = "Bankguthaben",
+                gold = "Bankgold",
+                opened = "Konto eröffnet",
+                fee = "Nächste Zahlung $",
+                desc = "Details zu deinem Konto anzeigen",
+            },
+            storage = {
+                label = "Lagerplätze",
+                desc = "Aktuelle Lagerplätze",
+                img = "toast_gang_savings",
+                hint = "Du kannst mehr Plätze im Verwaltungsmenü kaufen"
+            },
+            subText = "Konto Details",
+        },
+        business_management = {
+            details = {
+                balance = "Bilanz: ",
+                storage = "Lagerpreis: ",
+                slots = " Plätzepreis: ",
+                amount = "Platzmenge: ",
+                curentslots = "Aktuelle Plätze: ",
+                img = "cross",
+                desc = "Du hast noch keinen Speicher <br> Wähle die Anzahl der Slots, die du kaufen möchtest",
+                desc1 = "Wählen die Anzahl der Plätze, die du kaufen möchtest",
+                desc2 = "Drücken die Eingabetaste, um den Kauf einer Speichereinheit bei dieser Bank zu bestätigen",
+                hint = "maximale Lagerplätze erreicht"
+            },
+            slots = {
+                label = "Anzahl Stlots:",
+                desc = "Du hast noch kein Lager <br> Wähle die Anzahl an Slots, die du kaufen möchtest",
+                hint = "Maximum der erlaubten Slots",
+                img = "cross"
+            },
+            confirm = {
+                label = "Bestätigen",
+                img = "tick",
+                desc = "Drücke Enter um die Anzahl der Slots zu bestätigen",
+                desc1 = "Insgesamt",
+            },
+            subText = "Lager Management",
+        },
+        business_access = {
+            access = {
+                yes = "Ja",
+                no = "Nein",
+                label = "Zugang zum Lager",
+                label1 = "Zugang zum Hinterlegen",
+                label2 = "Zugang zum Abheben",
+                label3 = "Zugang für Transfer",
+                desc = "Drücke Enter für die Berechtigungen",
+            },
+            add = {
+                label = "Füge Spieler hinzu",
+                desc = "Es wurde niemand gefunden, der bereits hinzugefügt wurde.",
+                desc1 = "Preis",
+                desc2 = "Füge Spieler hinzu.",
+                img = "cross",
+                img1 = "tick"
+            },
+            allowed = {
+                label = "Berechtigungen haben: ",
+                img = "emote_action_take_notes_1",
+            },
+            remove = {
+                label = "Nehme Rechte weg",
+                desc = "Entferne jemanden von deinem Account",
+                hint = "Du musst eine Gebühr zahlen $",
+                img = "tick"
+            },
+            subText = "Zugriffsverwaltung",
+        },
+        business_access2 = {
+            withdraw = {
+                label = "Zugriff Abhebung",
+                desc = "Erlauben Sie diesem Spieler, Geld von Ihrem Konto abzuheben",
+            },
+            deposit = {
+                label = "Zugriff Geld Einzahlen",
+                desc = „Erlauben Sie diesem Spieler, Geld auf Ihr Konto einzuzahlen",
+            },
+            transfer = {
+                label = "Zugang Transfer",
+                desc = "Erlauben Sie diesem Spieler, Geld auf andere Konten zu überweisen",
+            },
+            storage = {
+                label = "Zugang Lager",
+                desc = "Erlauben Sie diesem Player, auf Ihr Lager zuzugreifen",
+            },
+            confirm = {
+                label = "Bestätige Änderungen",
+                desc = "Bestätige die Änderungen, indem du Enter drückst ",
+                hint = "Um Berechtigungen zu ändern wird keine Gebühr erhoben",
+                img = "tick"
+            },
+            remove = {
+                label = "Vom Account entfernen",
+                desc = "Entferne einen Spieler vom Bank Account",
+                hint = "Der Spieler wird vollständig vom Konto entfernt",
+                img = "cross"
+            }
+        },
+        business_loans = {
+            ask = {
+                label = "Nach Darlehen fragen",
+                desc = "Es scheint, dass Sie angestellt sind. Drücken Sie die Eingabetaste, um weitere Details zu überprüfen ",
+                hint = "Drücke Enter um fortzufahren"
+            },
+            subText = "Lohn-Menü",
+
+        },
+        business_lend = {
+            amount = {
+                label = "Anzahl",
+                desc = "Schreibe die Anzahl, die du anfragen möchtest",
+                hint = "Maximale Erlaubte Anzahl:",
+                img = "cross"
+            },
+            loan = {
+                amount = "Darlehen Anzahl: ",
+                interest = "Zinsrate: ",
+                weeks = "In Wochen: ",
+                perweek = "Zahlen Sie pro Woche: ",
+                desc = "Darlehen basieren auf Tagen, da der Zinssatz des Kunden davon abhängt, wie lange und wie viel verlangt wird ",
+                hint = "Wenn Sie Ihre Kredite nicht bezahlen, werden Sie wie gewünscht eingestellt und alles, was Sie besitzen, wird Ihnen weggenommen"
+            },
+            loanamount = {
+                label = "Darlehensbetrag",
+                desc = "Kredite basieren auf Tagen, da der Zinssatz des Kunden davon abhängt, wie lange und wie viel verlangt wird",
+                hint = " Wenn Sie Ihre Kredite nicht bezahlen, werden Sie wie gewünscht eingestellt und alles, was Sie besitzen, wird Ihnen weggenommen"
+            },
+
+            duration = {
+                label = "Darlehensdauer",
+                desc = "Kredite basieren auf Tagen, da der Zinssatz des Kunden davon abhängt, wie lange und wie viel verlangt wird",
+                hint = " Wenn Sie Ihre Kredite nicht bezahlen, werden Sie wie gewünscht eingestellt und alles, was Sie besitzen, wird Ihnen weggenommen"
+            },
+            take = {
+                label = "Nehmen Sie einen Kredit auf ",
+                desc =
+                "Bestätigen Sie, dass das Darlehen automatisch von Ihrer Bank abgebucht wird. Wenn das Geld nicht gefunden wird, werden Sie wie gewünscht eingestellt",
+                hint = "Wenn Kredite nicht zurückgezahlt werden, werden Sie wie gewünscht eingestellt und alles, was Sie besitzen, wird Ihnen weggenommen",
+                img = "tick"
+            },
+            subText = "Darlehen Menü",
+        },
+        business_loandetails = {
+            loan = {
+                amount   = "Darlehensbetrag: ",
+                interest = "Zinsrate: ",
+                weeks    = "Für Wochen: ",
+                perweek  = "Zahlen Sie pro Woche: ",
+                desc     = "Kreditdetails"
+            },
+            paiddate = {
+                label = "Zahldatum:",
+                label2 = "Auszahlungsbetrag: $ ",
+                desc = "Zahlungen erfolgen ausschließlich automatisch.",
+                desc1 = "Status",
+                hint = "Sie können bei keiner anderen Bank mehr Kredite beantragen."
+            },
+            paid = "Bezahlt",
+            notpaid = "Nicht bezahlt",
+            img = "cross",
+            img1 = "tick",
+            subText = "Darlehen Details",
+        },
+        business_gold = {
+            details = {
+                label = "Momentaner Status",
+                label1 = "Preis pro Gramm",
+                label2 = "Verkaufe Gold",
+                desc = "Verkaufe dein Gold an die Bank",
+            },
+            details2 = {
+                desc = "Drücke Enter um an die Bank zu verkaufen <br> hast du",
+                desc1 = " zu verkaufen",
+                desc2 = "Wir bezahlen ",
+                desc3 = "Du hast nicht genug zum verkaufen",
+            },
+            subText = "Gold-Verkauf Menü",
+        },
+        bank_goldrobbery = {
+            gold = {
+                label = "Gold Tresor",
+                desc = "Stehle Gold von der Bank ",
+                hint = "Sie können diesen Artikel zur Lieferung zurückziehen"
+            },
+            money = {
+                label = "Geld Tresor",
+                desc = "Stehle Geld von der Bank",
+                hint = "Sie können diesen Artikel zur Lieferung zurückziehen"
+            },
+            title = "Gold Safe Menü",
+            subText = "Safe Menü",
+            desc = " Menge ",
+            desc1 = " von diesem Item ",
+            hint = "Drücke Enter um das Item zu nehmen",
+            desc2 = "Anzahl von Geld im Tresor",
+            hint1 = "Drücke Enter um es zu nehmen",
+        },
+        deliveries = {
+            desc = " Du hast eine Anzahl von ",
+            desc1 = " von diesem Item können verkauft werden für $ ",
+            desc2 = " jedes ",
+            desc3 = " Du bekommst ",
+            desc4 = " Drücke ENter zum verkaufen ",
+            desc5 = " Du hast nicht genug Items zum verkaufen ",
+            title = "Gold Lieferun",
+            subText = "Gold Verkaufs Menü",
+        },
+        goldvault = {
+            desc = "Du hast eine Anzahl von ",
+            desc2 = " von diesem Item ",
+            desc3 = " Sie können diesen Artikel zur Lieferung zurückziehen",
+            desc4 = " Du brauchst ",
+            desc5 = "  dieses Artikels",
+            title = "Gold Tresor",
+            subText = "Gold Tresor Menü",
+        },
+        playerbased = {
+            label = "Geschäfts Menü",
+            desc =
+            "Geschäfts Account Menü <br>Offene Accounts, ansehen/setzen von Darlehen, Lager Management, Zugriffs- und Kontoschließungsoptionen ",
+            hint = "Du brauchst die Spieler ID",
+            label1 = "Spieler Menü",
+            desc1 = "Persönliche Account <br> Transaktionen, Transfere,Gemeinschaftskonten, Lagerzugriff",
+            hint1 = "Du brauchst die Spieler ID",
+        },
+        bossmenu = {
+            transaction = {
+                label = "Transaktionen",
+                desc = "Führe Transaktionen durch"
+            },
+            viewtransaction = {
+                label = "Sieh deine Transaktionen an",
+                desc = "Sieh die Company Transaktionen an"
+            },
+            viewloans = {
+                label = "Sieh dir Darlehen an",
+                desc = "Sieh dir alle Darlehen an"
+            },
+            employees = {
+                label = "Angestellte",
+                desc = "Angestellte Management bezahlen einstellen feuern"
+            },
+            viewwanted = {
+                label = "Siehe Gesuchte",
+                desc = "Siehe alle Gesuchten und manage diese"
+            },
+            viewplayer = {
+                label = "Sieh den Spieler Account",
+                desc = "<br><br>siehe alle gesuchten Spieler und manage diese"
+            }
+
+        },
+        bossledger = {
+            details = {
+                label = "Konto Stand",
+                label1 = "Geld in der Tasche ",
+                desc = "Transaktionsmenü"
+            },
+            deposit = {
+                label = "Einzahlen",
+                desc = "Zahle für die Company ein",
+                img = "selection_arrow_right"
+            },
+            withdraw = {
+                label = "Auszahlung",
+                desc = "Zahle etwas von der Company aus",
+                img = "selection_arrow_left"
+            },
+            hop = {
+                label = "Hop Anzahl",
+                desc = "Choose hop amount to easily get the amount quicker",
+            },
+            confirm = {
+                label = "Bestätigen",
+                desc = "Bestätigen Sie den von Ihnen gewählten Betrag",
+                hint = "Drücken Sie zur Bestätigung die Eingabetaste",
+                img = "money_coinstack",
+                img1 = "tick"
+            },
+            subText = "Transaktions-Menü",
+        },
+        bossloans = {
+            desc = "Wählen Sie den Kunden aus, für den Sie die Kreditdetails anzeigen möchten",
+            subText = "Darlehens-Menü",
+            amount = "Höhe Darlehen: ",
+            interest = "Zinsrate: ",
+            weeks = "In Wochen: ",
+            perweek = "Zahlung pro Woche: ",
+            paid = "Bezahlt",
+            notpaid = "Nicht bezahlt",
+            img = "cross",
+            img1 = "tick",
+            info = {
+                desc = "Spieler Darlehens Information",
+                desc1 = "Account nein ",
+                hint = "Scrolle runter"
+            },
+            view = {
+                label = "Zahlungen ansehen",
+                desc = "Siehe Kunden Zahlungen an",
+                hint = "Drücke Enter um das Darlehen zu entfernen"
+            },
+            remove = {
+                label = "Darlehen entfernen",
+                desc = "Entferne das Darlehen von diesem Kunden",
+                hint = "Drücke zur Bestätigung Enter"
+            },
+            details2 = {
+                desc = "Zahldatum: ",
+                desc1 = "Höhe Zahlung: $ ",
+                desc2 = "Zahlungen werden nur automatisch getätigt.",
+                desc3 = "Status",
+                hint = "Sie können bei keiner anderen Bank mehr Kredite beantragen."
+            },
+        },
+        bosswanted = {
+            img = "blip_wanted_poster",
+            img1 = "rpg_agitation",
+            desc = "Name: ",
+            desc1 =
+            "Dieser Spieler wird wegen nicht Zahlung des Kredites gesucht <br> kontaktiere Sheriffs oder Kopfgeldjäger <br><br>Account Nummer ",
+            subText = "Gesucht Menü",
+            remove = "Drücke Enter um diese Person nicht mehr als Gesucht zu bezeichnen",
+        },
+        bossplayer = {
+            client = "Kunden-Name",
+            account = "Account Nummer",
+            balance = "Kontostand",
+            gold = "Bank Gold",
+            wanted = "Ist Gesucht: ",
+            subText = "Kunden Menü",
+        },
+        bossview = {
+            notransaction = {
+                label = "Es wurden keine Transaktionen gefunden",
+                desc = "Du hast noch keine Transaktionen getätigt",
+                img = "cross"
+            },
+            labels = {
+                deposit = "Einzahlung getätigt: ",
+                withdraw = "Auszahlung getätigt: ",
+                transfer = "Transfer von: ",
+                date = "Datum: ",
+                madeby = "Von: ",
+                amount = "Anzahl: ",
+                lastbalance = "Letzte Bilanz: ",
+                feepaid = "Gebühr bezahlt: ",
+                from = "Von: ",
+                hint = "Drücke Enter um diese Transaktion zu löschen",
+            },
+            img = {
+                deposit = "selection_arrow_right",
+                withdraw = "selection_arrow_left",
+                transfer = "selection_arrow_right",
+            },
+            subText = "Transaction Menu",
+        },
+        employee = {
+            img = "tick",
+            desc = "Name Angestellter: ",
+            desc1 = "Stardatum: ",
+            hint = "Drücke Enter um den Angestellten zu feuern",
+            label = "Angestellten einstellen",
+            desc2 = "Jemand neuen einstellen",
+            subText = "Angestellten Menü",
+        }
+    },
+
+
+}
